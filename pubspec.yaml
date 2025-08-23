@@ -1,8 +1,6 @@
-name: shakir_drive
-description: Application SHAKIR - Cartes prépayées (Drive uniquement)
+name: shakir_drive_app
+description: Application Flutter - Cartes prépayées Drive Shakir
 publish_to: "none"
-
-version: 1.1.0+2
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -10,14 +8,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
-  qr_flutter: ^4.1.0
-  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
