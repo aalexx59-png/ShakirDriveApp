@@ -5,9 +5,8 @@ workflows:
     environment:
       flutter: stable
     scripts:
-      - name: Pre-build (create android project + get deps)
+      - name: Pre-build (get dependencies)
         script: |
-          flutter create -t app . --org com.shakir --project-name shakir_drive --overwrite
           flutter pub get
       - name: Build APK (release)
         script: |
@@ -18,8 +17,3 @@ workflows:
       email:
         recipients:
           - aalexx59@gmail.com
-        notify:
-          success: true
-          failure: true
-        attachments:
-          - build/**/outputs/**/*.apk
