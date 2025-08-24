@@ -5,9 +5,16 @@ workflows:
     environment:
       flutter: stable
     scripts:
+      # 1) Génère la structure Flutter (android/, ios/, etc.) sans écraser ton code existant
+      - name: Create Flutter project structure if missing
+        script: |
+          flutter --version
+          flutter create . || true
+      # 2) Récupère les dépendances
       - name: Pre-build (get dependencies)
         script: |
           flutter pub get
+      # 3) Build APK release
       - name: Build APK (release)
         script: |
           flutter build apk --release
