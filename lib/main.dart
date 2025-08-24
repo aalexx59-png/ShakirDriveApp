@@ -10,9 +10,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ShakirDriveApp',
+      debugShowCheckedModeBanner: false, // enlève la bannière "debug"
+      title: 'Shakir Drive',
       theme: ThemeData(
-        colorSchemeSeed: Colors.blue,
+        primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
       home: const HomePage(),
@@ -26,9 +27,14 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('ShakirDriveApp')),
+      appBar: AppBar(
+        title: const Text("Bienvenue chez Shakir Drive"),
+      ),
       body: const Center(
-        child: Text('Hello 👋 Build Codemagic OK'),
+        child: Text(
+          "Application Shakir Drive prête 🚀",
+          style: TextStyle(fontSize: 20),
+        ),
       ),
     );
   }
