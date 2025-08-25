@@ -1,73 +1,36 @@
 import 'package:flutter/material.dart';
 
 class MealHistorySection extends StatelessWidget {
-  const MealHistorySection({super.key, required this.plan});
+  final List<Map<String, String>> mealHistory;
 
-  final String plan; // "SOLO" ou "FAMILY"
+  const MealHistorySection({super.key, required this.mealHistory});
 
   @override
   Widget build(BuildContext context) {
-    final items = <_Meal>[
-      _Meal(date: "2025-03-01", label: "Couscous poulet", price: 17),
-      _Meal(date: "2025-03-05", label: "Couscous merguez", price: 23),
-      _Meal(date: "2025-03-10", label: "Couscous brochettes", price: 20),
-    ];
-
-    final total = items.fold<double>(0, (s, m) => s + m.price);
-
-    return Card(
-      color: Colors.white.withOpacity(0.96),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Historique ${plan == "SOLO" ? "SOLO" : "FAMILY"} (démo)",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            ...items.map((m) => _row(m)),
-            const Divider(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text("Total consommé"),
-                Text("${total.toStringAsFixed(2)} €",
-                    style: const TextStyle(fontWeight: FontWeight.w700)),
-              ],
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              "Déductions automatiques selon le repas choisi. "
-              "Scan QR → mise à jour du solde et de l’historique.",
-              style: TextStyle(color: Colors.black54, height: 1.3),
-            ),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Historique des repas",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
+        const SizedBox(height: 10),
+        if (mealHistory.isEmpty)
+          const Text("Aucun repas enregistré pour le moment."),
+        ...mealHistory.map((meal) {
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            child: ListTile(
+              leading: const Icon(Icons.fastfood),
+              title: Text(meal['name'] ?? 'Repas'),
+              subtitle: Text("Date : ${meal['date'] ?? 'Inconnue'}"),
+            ),
+          );
+        }).toList(),
+      ],
     );
   }
-
-  Widget _row(_Meal m) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Row(
-          children: [
-            const Icon(Icons.restaurant, size: 18, color: Colors.black54),
-            const SizedBox(width: 8),
-            Expanded(child: Text("${m.label} — ${m.date}")),
-            Text("${m.price.toStringAsFixed(2)} €"),
-          ],
-        ),
-      );
-}
-
-class _Meal {
-  final String date;
-  final String label;
-  final double price;
-  _Meal({required this.date, required this.label, required this.price});
 }
