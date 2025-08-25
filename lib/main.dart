@@ -117,4 +117,54 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class _OfferCard extends StatelessWidget
+class _OfferCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String image;
+  const _OfferCard({required this.title, required this.subtitle, required this.image});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 160,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [BoxShadow(blurRadius: 12, color: Color(0x1A000000))],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Row(
+        children: [
+          Expanded(
+            flex: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(title,
+                      style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 6),
+                  Text(subtitle,
+                      style: const TextStyle(
+                        fontSize: 14, color: Colors.black87)),
+                  const SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text("J’en profite"),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 6,
+            child: Image.asset(image, fit: BoxFit.cover),
+          ),
+        ],
+      ),
+    );
+  }
+}
