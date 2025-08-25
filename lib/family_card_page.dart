@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'meal_history_section.dart';
 
 class FamilyCardPage extends StatelessWidget {
   const FamilyCardPage({super.key});
@@ -25,7 +26,6 @@ class FamilyCardPage extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
             children: [
-              // Rappel Drive + paiement
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
@@ -41,22 +41,18 @@ class FamilyCardPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Carte FAMILY (avec filigrane)
               Stack(
                 children: [
                   Card(
                     color: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     elevation: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
+                    child: const Padding(
+                      padding: EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Carte FAMILY",
-                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
-                          ),
+                        children: [
+                          Text("Carte FAMILY", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
                           SizedBox(height: 6),
                           Text("Pour la famille ou les amis • Maximum de bonus"),
                           SizedBox(height: 10),
@@ -68,7 +64,6 @@ class FamilyCardPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Filigrane discret
                   Positioned.fill(
                     child: IgnorePointer(
                       ignoring: true,
@@ -79,11 +74,7 @@ class FamilyCardPage extends StatelessWidget {
                             angle: -0.25,
                             child: const Text(
                               "100€ = 150€",
-                              style: TextStyle(
-                                fontSize: 48,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.black,
-                              ),
+                              style: TextStyle(fontSize: 48, fontWeight: FontWeight.w900, color: Colors.black),
                             ),
                           ),
                         ),
@@ -95,19 +86,16 @@ class FamilyCardPage extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // Actions principales
               Row(
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "Activation au guichet : après paiement, un QR vous est remis "
-                              "pour activer votre carte FAMILY dans l’app.",
-                            ),
-                          ),
+                          const SnackBar(content: Text(
+                            "Activation au guichet : après paiement, un QR vous est remis "
+                            "pour activer votre carte FAMILY dans l’app.",
+                          )),
                         );
                       },
                       icon: const Icon(Icons.store_rounded),
@@ -131,9 +119,7 @@ class FamilyCardPage extends StatelessWidget {
                               "Ici, vous scannerez le QR remis au guichet pour activer la carte FAMILY.\n"
                               "La carte virtuelle sera créée avec votre numéro Famille de Cœur.",
                             ),
-                            actions: [
-                              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("OK"))
-                            ],
+                            actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("OK"))],
                           ),
                         );
                       },
@@ -151,7 +137,11 @@ class FamilyCardPage extends StatelessWidget {
 
               const SizedBox(height: 18),
 
-              // Encart bonus
+              // 🔥 Historique (démo)
+              const MealHistorySection(plan: "FAMILY"),
+
+              const SizedBox(height: 18),
+
               Card(
                 color: Colors.white.withOpacity(0.96),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
