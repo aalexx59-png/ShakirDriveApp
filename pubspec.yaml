@@ -1,23 +1,29 @@
 name: shakir_drive_app
-description: Cartes prépayées - Shakir Drive
+description: Application Flutter - Cartes prépayées Shakir Drive
 publish_to: "none"
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.2
 
 flutter:
   uses-material-design: true
+
   assets:
-    - assets/images/logo_shakir_drive.png
-    - assets/images/offre_3plus1.png
+    - assets/images/offer_3plus1.png
     - assets/images/bonus_100_150.png
+    - assets/images/welcome_banner.png
+    - assets/images/qr_scan_banner.png
+    - assets/images/smiley_happy.png
+    - assets/images/smiley_neutral.png
+    - assets/images/smiley_sad.png
+    - assets/images/solo_card_visual.png
+    - assets/images/family_card_visual.png
