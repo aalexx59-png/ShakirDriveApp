@@ -1,3 +1,15 @@
+name: shakir_drive_app
+description: Application Flutter - Cartes prépayées Drive Shakir
+publish_to: "none"
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # ajoute tes dépendances ici si besoin
+
 flutter:
   uses-material-design: true
   assets:
