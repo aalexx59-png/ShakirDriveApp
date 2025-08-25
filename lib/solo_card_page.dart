@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'meal_history_section.dart';
 
 class SoloCardPage extends StatelessWidget {
   const SoloCardPage({super.key});
@@ -25,7 +26,6 @@ class SoloCardPage extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
             children: [
-              // Bandeau info
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
@@ -41,22 +41,18 @@ class SoloCardPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Carte SOLO (avec filigrane)
               Stack(
                 children: [
                   Card(
                     color: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     elevation: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
+                    child: const Padding(
+                      padding: EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Carte SOLO",
-                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
-                          ),
+                        children: [
+                          Text("Carte SOLO", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
                           SizedBox(height: 6),
                           Text("Idéale pour 1 personne • Avantage de bienvenue"),
                           SizedBox(height: 10),
@@ -67,7 +63,6 @@ class SoloCardPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Filigrane discret
                   Positioned.fill(
                     child: IgnorePointer(
                       ignoring: true,
@@ -78,11 +73,7 @@ class SoloCardPage extends StatelessWidget {
                             angle: -0.25,
                             child: const Text(
                               "50€ = 70€",
-                              style: TextStyle(
-                                fontSize: 54,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.black,
-                              ),
+                              style: TextStyle(fontSize: 54, fontWeight: FontWeight.w900, color: Colors.black),
                             ),
                           ),
                         ),
@@ -94,18 +85,15 @@ class SoloCardPage extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // Actions principales
               Row(
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "Activation au guichet : après paiement, un QR vous est remis pour activer votre carte dans l’app.",
-                            ),
-                          ),
+                          const SnackBar(content: Text(
+                            "Activation au guichet : après paiement, un QR vous est remis pour activer votre carte dans l’app.",
+                          )),
                         );
                       },
                       icon: const Icon(Icons.store_rounded),
@@ -129,9 +117,7 @@ class SoloCardPage extends StatelessWidget {
                               "Ici, vous scannerez le QR remis au guichet pour activer la carte SOLO.\n"
                               "La carte virtuelle sera créée avec votre numéro Famille de Cœur.",
                             ),
-                            actions: [
-                              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("OK"))
-                            ],
+                            actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("OK"))],
                           ),
                         );
                       },
@@ -149,7 +135,11 @@ class SoloCardPage extends StatelessWidget {
 
               const SizedBox(height: 18),
 
-              // Conseils / petit encart
+              // 🔥 Historique (démo)
+              const MealHistorySection(plan: "SOLO"),
+
+              const SizedBox(height: 18),
+
               Card(
                 color: Colors.white.withOpacity(0.96),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
