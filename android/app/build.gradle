@@ -1,52 +1,27 @@
+// android/app/build.gradle
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
-/*
- * Récupère le chemin du SDK Flutter via local.properties
- * (Codemagic le crée automatiquement).
- */
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file('local.properties')
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
-}
-def flutterSdkPath = localProperties.getProperty('flutter.sdk')
-assert flutterSdkPath != null : "Le chemin du SDK Flutter (flutter.sdk) doit être défini dans local.properties"
-apply from: "$flutterSdkPath/packages/flutter_tools/gradle/flutter.gradle"
-
-/*
- * Source du projet Flutter
- */
-flutter {
-    source '../..'
-}
-
-/*
- * Versions d'app
- */
-def flutterVersionCode = 1
-def flutterVersionName = "1.0.0"
-
 android {
     namespace "com.shakirdriveapp"
-    compileSdkVersion 34
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.shakirdriveapp"
-        minSdkVersion 21
-        targetSdkVersion 34
-        versionCode flutterVersionCode
-        versionName flutterVersionName
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
         multiDexEnabled true
     }
 
     buildTypes {
         release {
-            // Tu peux activer ProGuard plus tard si tu veux
+            // Désactive R8/Proguard pour simplifier (tu pourras l'activer plus tard)
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
+            // Utilise la signature debug par défaut (à remplacer par ta release keystore plus tard)
+            signingConfig signingConfigs.debug
         }
         debug {
             debuggable true
@@ -54,18 +29,26 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
     }
 
-    kotlinOptions {
-        jvmTarget = '11'
+    // Assure la compatibilité avec les anciennes libs si besoin
+    packagingOptions {
+        resources {
+            excludes += ['/META-INF/{AL2.0,LGPL2.1}']
+        }
     }
 }
 
+repositories {
+    google()
+    mavenCentral()
+}
+
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.ext.has('kotlin_version') ? project.ext.kotlin_version : '1.9.23'}"
 }
