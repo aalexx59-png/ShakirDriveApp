@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const ShakirDriveApp());
-}
+void main() => runApp(const ShakirDriveApp());
 
 class ShakirDriveApp extends StatelessWidget {
   const ShakirDriveApp({super.key});
@@ -12,16 +10,18 @@ class ShakirDriveApp extends StatelessWidget {
     return MaterialApp(
       title: 'SHAKIR DRIVE',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFCB7A2B)),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
         useMaterial3: true,
       ),
       home: const HomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,9 +30,9 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset('assets/icon/shakir_drive.png', width: 128, height: 128),
+            Image.asset('assets/icon/shakir_drive.png', width: 160, height: 160),
             const SizedBox(height: 16),
-            const Text('Version simple prête pour build APK'),
+            const Text('Bienvenue 👋', style: TextStyle(fontSize: 20)),
           ],
         ),
       ),
