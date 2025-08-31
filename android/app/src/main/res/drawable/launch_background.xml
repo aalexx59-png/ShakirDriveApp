@@ -1,16 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Fond sable -->
-    <item android:drawable="@android:color/transparent"/>
-    <item>
-        <shape android:shape="rectangle">
-            <solid android:color="#E08B3A"/>
-        </shape>
-    </item>
 
-    <!-- Logo au centre -->
+    <!-- Fond sable -->
+    <item android:drawable="@android:color/holo_orange_light" />
+
+    <!-- Logo Shakir centré -->
     <item>
         <bitmap
             android:gravity="center"
             android:src="@mipmap/ic_launcher" />
     </item>
+
 </layer-list>
