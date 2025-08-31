@@ -18,9 +18,10 @@ android {
 
     buildTypes {
         release {
+            // Simple pour commencer (pas de R8/proguard)
             minifyEnabled false
             shrinkResources false
-            // (plus tard tu mettras une vraie signature release)
+            signingConfig signingConfigs.debug
         }
         debug {
             debuggable true
@@ -37,7 +38,7 @@ android {
 
     packagingOptions {
         resources {
-            excludes += ["/META-INF/{AL2.0,LGPL2.1}"]
+            excludes += [ '/META-INF/{AL2.0,LGPL2.1}' ]
         }
     }
 }
