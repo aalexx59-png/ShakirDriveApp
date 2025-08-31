@@ -1,32 +1,18 @@
 workflows:
   android_release:
-    name: Android Release (Email APK)
+    name: Android Release
     max_build_duration: 60
     environment:
       flutter: stable
       java: 17
-    cache:
-      cache_default_paths: true
-
     scripts:
-      - name: Pre-build (deps + icons)
-        script: |
-          flutter --version
-          flutter pub get
-          # Génère les icônes à partir de assets/icon/shakir_drive.png
-          flutter pub run flutter_launcher_icons:main
-
+      - name: Get Flutter dependencies
+        script: flutter pub get
       - name: Build APK (release)
-        script: |
-          flutter build apk --release
-
+        script: flutter build apk --release
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
-
     publishing:
       email:
         recipients:
-          - aalexx59@gmail.com
-        notify:
-          success: true
-          failure: true
+          - "aalexx59@gmail.com"
