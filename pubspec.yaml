@@ -22,12 +22,15 @@ flutter_icons:
   android: true
   ios: true
   image_path: "assets/icon/shakir_drive.png"
+  remove_alpha_ios: true  # recommandé pour iOS (évite les soucis de transparence)
+  adaptive_icon_background: "#ffffff" # fond blanc sur Android (tu peux changer)
+  adaptive_icon_foreground: "assets/icon/shakir_drive.png"
 
 flutter:
   uses-material-design: true
 
   assets:
-    # Dossier des images
+    # Dossier des images principales
     - assets/images/v0_welcome.png
     - assets/images/v1_home.png
     - assets/images/v1bis_profile.png
