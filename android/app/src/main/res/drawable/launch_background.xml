@@ -1,12 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Couleur de fond de l'écran de lancement -->
-    <item android:drawable="@android:color/white" />
+    <!-- Fond sable -->
+    <item android:drawable="@android:color/transparent"/>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#E08B3A"/>
+        </shape>
+    </item>
 
-    <!-- Logo Shakir Drive centré (utilise l'icône mipmap que tu as mise) -->
+    <!-- Logo au centre -->
     <item>
         <bitmap
-            android:src="@mipmap/ic_launcher"
-            android:gravity="center" />
+            android:gravity="center"
+            android:src="@mipmap/ic_launcher" />
     </item>
 </layer-list>
