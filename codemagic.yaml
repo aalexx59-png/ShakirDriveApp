@@ -4,23 +4,29 @@ workflows:
     max_build_duration: 60
     environment:
       flutter: stable
+      java: 17
+    cache:
+      cache_default_paths: true
+
     scripts:
-      # 1) Génère la structure Flutter (android/, ios/, etc.) sans écraser ton code existant
-      - name: Create Flutter project structure if missing
+      - name: Pre-build (deps + icons)
         script: |
           flutter --version
-          flutter create . || true
-      # 2) Récupère les dépendances
-      - name: Pre-build (get dependencies)
-        script: |
           flutter pub get
-      # 3) Build APK release
+          # Génère les icônes à partir de assets/icon/shakir_drive.png
+          flutter pub run flutter_launcher_icons:main
+
       - name: Build APK (release)
         script: |
           flutter build apk --release
+
     artifacts:
-      - build/**/outputs/**/*.apk
+      - build/app/outputs/flutter-apk/app-release.apk
+
     publishing:
       email:
         recipients:
           - aalexx59@gmail.com
+        notify:
+          success: true
+          failure: true
