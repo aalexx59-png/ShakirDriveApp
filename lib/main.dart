@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+
+// Tes écrans (tous dans lib/)
 import 'v0_welcome.dart';
 import 'v1_home.dart';
+import 'v1bis_home.dart';
+import 'v2_account.dart';
 import 'card_choice_page.dart';
 
 void main() {
@@ -21,16 +25,18 @@ class ShakirDriveApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const SplashScreen(), // écran temporaire
-        '/welcome': (context) => const V0Welcome(),
-        '/home': (context) => const V1Home(),
-        '/card-choice': (context) => const CardChoicePage(),
+        '/': (context) => const SplashScreen(),     // Affiche V0 pendant 3s
+        '/welcome': (context) => const V0Welcome(), // (optionnel si tu veux y revenir)
+        '/home': (context) => const V1Home(),       // Accueil (numéro + bouton)
+        '/home-bis': (context) => const V1BisHome(),// Profil + tirage
+        '/account': (context) => const V2Account(), // Mon compte (historique + paiements)
+        '/card-choice': (context) => const CardChoicePage(), // Offres / recharges
       },
     );
   }
 }
 
-/// SplashScreen qui redirige après 3 secondes
+/// SplashScreen : montre V0Welcome puis redirige vers V1 après 3s.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -43,12 +49,14 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, '/home'); // correction ici ✅
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, '/home'); // → V1 (pas de transition V1→V1BIS)
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return const V0Welcome(); // affiche ton écran V0 pendant 3s
+    // On réutilise directement ton écran V0 comme “splash”
+    return const V0Welcome();
   }
 }
