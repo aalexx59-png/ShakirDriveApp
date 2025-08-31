@@ -21,7 +21,7 @@ class ShakirDriveApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const SplashScreen(), // nouvel écran temporaire
+        '/': (context) => const SplashScreen(), // écran temporaire
         '/welcome': (context) => const V0Welcome(),
         '/home': (context) => const V1Home(),
         '/card-choice': (context) => const CardChoicePage(),
@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, '/welcome');
+      Navigator.pushReplacementNamed(context, '/home'); // correction ici ✅
     });
   }
 
