@@ -9,6 +9,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  qr_flutter: ^4.0.0   # <-- Ajouté pour générer le QR Code
 
 dev_dependencies:
   flutter_test:
