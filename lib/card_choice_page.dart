@@ -1,197 +1,191 @@
 import 'package:flutter/material.dart';
-import 'solo_card_page.dart';
-import 'family_card_page.dart';
 
 class CardChoicePage extends StatelessWidget {
   const CardChoicePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final brownStart = const Color(0xFF4E342E);
-    final brownEnd = const Color(0xFF795548);
+    const sable = Color(0xFF8B5E3C);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8E6C8), // beige/sable doux
       appBar: AppBar(
-        title: const Text("Choisir ma carte"),
-        backgroundColor: brownStart,
+        backgroundColor: sable,
+        title: const Text('Choisir ma recharge'),
+        centerTitle: true,
       ),
-      body: Container(
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const SizedBox(height: 8),
+          _RechargeCard(
+            title: 'Recharge SOLO',
+            subtitle: '50 € → 70 € (20 € offerts)',
+            assetPath: 'assets/images/solo_card_visual.png', // déjà dans ton pubspec.yaml
+            onTap: () => Navigator.pushNamed(context, '/solo'),
+            chip: 'Idéal 1 personne',
+          ),
+          const SizedBox(height: 16),
+          _RechargeCard(
+            title: 'Recharge FAMILY',
+            subtitle: '100 € → 150 € (50 € offerts)',
+            assetPath: 'assets/images/family_card_visual.png', // déjà dans ton pubspec.yaml
+            onTap: () => Navigator.pushNamed(context, '/family'),
+            chip: 'Parfait en famille',
+          ),
+          const SizedBox(height: 16),
+          _InfoBanner(
+            icon: Icons.card_giftcard_rounded,
+            text: 'À partir de 3 recharges achetées = la 4ᵉ offerte 🎁',
+          ),
+          const SizedBox(height: 8),
+          _InfoBanner(
+            icon: Icons.info_outline_rounded,
+            text: 'Paiement des commandes au Drive : via QR si solde suffisant, sinon à la caisse.',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RechargeCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String assetPath;
+  final String chip;
+  final VoidCallback onTap;
+
+  const _RechargeCard({
+    required this.title,
+    required this.subtitle,
+    required this.assetPath,
+    required this.onTap,
+    required this.chip,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: onTap,
+      child: Ink(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [brownStart, brownEnd],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFD6B06E), width: 2), // doré doux
+          boxShadow: const [
+            BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 4)),
+          ],
         ),
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-            children: [
-              // Rappel Drive uniquement
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white24),
-                ),
-                child: const Text(
-                  "Service DRIVE uniquement 🚗",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // visuel
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Image.asset(
+                  assetPath,
+                  fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(height: 16),
-
-              // Carte SOLO
-              _ChoiceCard(
-                title: "Carte SOLO",
-                subtitle: "Idéal pour 1 personne • Avantage de bienvenue",
-                bullets: const [
-                  "Filigrane avantage : 50€ = 70€",
-                  "Suivi de vos repas (couscous poulet, merguez, brochettes…) avec déductions auto.",
-                  "Règlement au guichet (CB/espèces) — bientôt dans l’app.",
-                ],
-                ctaLabel: "Voir la carte Solo",
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const SoloCardPage()),
-                ),
-                imageAsset: "assets/images/bonus_100_150.png", // fallback si manquant
-              ),
-              const SizedBox(height: 14),
-
-              // Carte FAMILY
-              _ChoiceCard(
-                title: "Carte FAMILY",
-                subtitle: "Pour la famille ou les amis • Max de bonus",
-                bullets: const [
-                  "Filigrane avantage : 100€ = 150€",
-                  "Partage facile entre proches, historique consolidé.",
-                  "Règlement au guichet (CB/espèces) — bientôt dans l’app.",
-                ],
-                ctaLabel: "Voir la carte Family",
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const FamilyCardPage()),
-                ),
-                imageAsset: "assets/images/offre_3plus1.png", // fallback si manquant
-              ),
-              const SizedBox(height: 18),
-
-              // Offre 3+1
-              Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                child: Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "BON PLAN 🎁 3 cartes achetées = la 4ᵉ offerte",
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            ),
+            // textes
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(title,
+                            style: const TextStyle(
+                              fontSize: 18,
                               fontWeight: FontWeight.w800,
+                            )),
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                            height: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFE8B0),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: const Color(0xFF3E2C20), width: 1),
+                          ),
+                          child: Text(
+                            chip,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF3E2C20),
                             ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Cumulez rapidement des avantages et partagez avec vos proches.",
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFD6B06E),
+                      foregroundColor: const Color(0xFF3E2C20),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: const BorderSide(color: Color(0xFF3E2C20), width: 1),
+                      ),
+                    ),
+                    onPressed: onTap,
+                    child: const Text(
+                      'Choisir',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _ChoiceCard extends StatelessWidget {
-  const _ChoiceCard({
-    required this.title,
-    required this.subtitle,
-    required this.bullets,
-    required this.ctaLabel,
-    required this.onTap,
-    this.imageAsset,
-  });
-
-  final String title;
-  final String subtitle;
-  final List<String> bullets;
-  final String ctaLabel;
-  final VoidCallback onTap;
-  final String? imageAsset;
+class _InfoBanner extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  const _InfoBanner({required this.icon, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (imageAsset != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  imageAsset!,
-                  height: 140,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    height: 140,
-                    alignment: Alignment.center,
-                    color: const Color(0xFFF2EDEB),
-                    child: const Text("Aperçu carte"),
-                  ),
-                ),
-              ),
-            if (imageAsset != null) const SizedBox(height: 12),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF3E5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFD6B06E), width: 1),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.brown[700]),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 4),
-            Text(subtitle),
-            const SizedBox(height: 8),
-            ...bullets.map(
-              (b) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("• "),
-                    Expanded(child: Text(b)),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              height: 46,
-              child: ElevatedButton.icon(
-                onPressed: onTap,
-                icon: const Icon(Icons.arrow_forward_rounded),
-                label: Text(ctaLabel),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4E342E),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
