@@ -17,7 +17,7 @@ android {
 
     buildTypes {
         release {
-            // Désactive R8/Proguard pour simplifier (tu pourras l'activer plus tard)
+            // Désactive R8/Proguard pour simplifier (tu pourras l’activer plus tard)
             minifyEnabled false
             shrinkResources false
             // Utilise la signature debug par défaut (à remplacer par ta release keystore plus tard)
@@ -32,23 +32,15 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = '17'
     }
 
-    // Assure la compatibilité avec les anciennes libs si besoin
+    // Compatibilité avec quelques libs si besoin
     packagingOptions {
         resources {
-            excludes += ['/META-INF/{AL2.0,LGPL2.1}']
+            excludes += ['META-INF/{AL2.0,LGPL2.1}']
         }
     }
-}
-
-repositories {
-    google()
-    mavenCentral()
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.ext.has('kotlin_version') ? project.ext.kotlin_version : '1.9.23'}"
 }
