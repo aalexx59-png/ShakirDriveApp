@@ -1,12 +1,11 @@
 <resources>
-    <!-- Thème utilisé pendant le lancement (écran blanc + logo centré) -->
+    <!-- Thème utilisé au démarrage -->
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">@drawable/launch_background</item>
-        <item name="android:windowFullscreen">false</item>
     </style>
 
-    <!-- Thème de l'app une fois Flutter démarré -->
-    <style name="NormalTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@android:color/white</item>
+    <!-- Thème normal après le splash -->
+    <style name="NormalTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">@color/white</item>
     </style>
 </resources>
