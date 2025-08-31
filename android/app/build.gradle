@@ -1,6 +1,7 @@
-// android/app/build.gradle
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+}
 
 android {
     namespace "com.shakirdriveapp"
@@ -17,11 +18,9 @@ android {
 
     buildTypes {
         release {
-            // Désactive R8/Proguard pour simplifier (tu pourras l’activer plus tard)
             minifyEnabled false
             shrinkResources false
-            // Utilise la signature debug par défaut (à remplacer par ta release keystore plus tard)
-            signingConfig signingConfigs.debug
+            // (plus tard tu mettras une vraie signature release)
         }
         debug {
             debuggable true
@@ -32,15 +31,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = "17"
     }
 
-    // Compatibilité avec quelques libs si besoin
     packagingOptions {
         resources {
-            excludes += ['META-INF/{AL2.0,LGPL2.1}']
+            excludes += ["/META-INF/{AL2.0,LGPL2.1}"]
         }
     }
 }
