@@ -1,35 +1,71 @@
-plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin"
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+/*
+ * Récupère le chemin du SDK Flutter via local.properties
+ * (Codemagic le crée automatiquement).
+ */
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+def flutterSdkPath = localProperties.getProperty('flutter.sdk')
+assert flutterSdkPath != null : "Le chemin du SDK Flutter (flutter.sdk) doit être défini dans local.properties"
+apply from: "$flutterSdkPath/packages/flutter_tools/gradle/flutter.gradle"
+
+/*
+ * Source du projet Flutter
+ */
+flutter {
+    source '../..'
 }
 
+/*
+ * Versions d'app
+ */
+def flutterVersionCode = 1
+def flutterVersionName = "1.0.0"
+
 android {
-    namespace "com.shakir.driveapp"
+    namespace "com.shakirdriveapp"
     compileSdkVersion 34
 
     defaultConfig {
-        applicationId "com.shakir.driveapp"
+        applicationId "com.shakirdriveapp"
         minSdkVersion 21
         targetSdkVersion 34
-        versionCode 1
-        versionName "1.0.0"
+        versionCode flutterVersionCode
+        versionName flutterVersionName
         multiDexEnabled true
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            // Tu peux activer ProGuard plus tard si tu veux
             minifyEnabled false
-            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            debuggable true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = '11'
     }
 }
 
-flutter {
-    source "../.."
-}
-
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
 }
