@@ -1,11 +1,13 @@
 <resources>
-    <!-- Thème utilisé au démarrage -->
+
+    <!-- Thème affiché pendant le splash screen -->
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">@drawable/launch_background</item>
     </style>
 
-    <!-- Thème normal après le splash -->
-    <style name="NormalTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
-        <item name="android:windowBackground">@color/white</item>
+    <!-- Thème normal de l'application -->
+    <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">@android:color/white</item>
     </style>
+
 </resources>
