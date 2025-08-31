@@ -1,178 +1,126 @@
 import 'package:flutter/material.dart';
-import 'meal_history_section.dart';
 
 class SoloCardPage extends StatelessWidget {
   const SoloCardPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const brownStart = Color(0xFF4E342E);
-    const brownEnd   = Color(0xFF795548);
+    const sable = Color(0xFF8B5E3C);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Carte SOLO"),
-        backgroundColor: brownStart,
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [brownStart, brownEnd],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white24),
-                ),
-                child: const Text(
-                  "Service DRIVE uniquement 🚗 — Paiement au guichet (CB/espèces).",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              Stack(
-                children: [
-                  Card(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    elevation: 1,
-                    child: const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Carte SOLO", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
-                          SizedBox(height: 6),
-                          Text("Idéale pour 1 personne • Avantage de bienvenue"),
-                          SizedBox(height: 10),
-                          _Bullet("Bonus de recharge : 50€ → 70€ (soit +20€)"),
-                          _Bullet("Suivi clair des repas (couscous poulet, merguez, brochettes…)"),
-                          _Bullet("Historique et déductions automatiques"),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned.fill(
-                    child: IgnorePointer(
-                      ignoring: true,
-                      child: Center(
-                        child: Opacity(
-                          opacity: 0.10,
-                          child: Transform.rotate(
-                            angle: -0.25,
-                            child: const Text(
-                              "50€ = 70€",
-                              style: TextStyle(fontSize: 54, fontWeight: FontWeight.w900, color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text(
-                            "Activation au guichet : après paiement, un QR vous est remis pour activer votre carte dans l’app.",
-                          )),
-                        );
-                      },
-                      icon: const Icon(Icons.store_rounded),
-                      label: const Text("Activer au guichet"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.brown.shade800,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: const Text("Scanner un QR (démo)"),
-                            content: const Text(
-                              "Ici, vous scannerez le QR remis au guichet pour activer la carte SOLO.\n"
-                              "La carte virtuelle sera créée avec votre numéro Famille de Cœur.",
-                            ),
-                            actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("OK"))],
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.qr_code_scanner_rounded),
-                      label: const Text("Scanner un QR"),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        side: const BorderSide(color: Colors.white),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 18),
-
-              // 🔥 Historique (démo)
-              const MealHistorySection(plan: "SOLO"),
-
-              const SizedBox(height: 18),
-
-              Card(
-                color: Colors.white.withOpacity(0.96),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                child: const Padding(
-                  padding: EdgeInsets.all(14),
-                  child: Text(
-                    "Astuce ✨ : après activation, votre numéro membre s’affiche et un message de numérologie apparaît "
-                    "(ex. 11 = maître nombre, 7 = chance…).",
-                    style: TextStyle(height: 1.3),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Bullet extends StatelessWidget {
-  const _Bullet(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      appBar: AppBar(title: const Text('Recharge SOLO')),
+      backgroundColor: const Color(0xFFF8E6C8),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          const Text("• "),
-          Expanded(child: Text(text)),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.asset(
+              'assets/images/solo_card_visual.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFD6B06E), width: 2),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Recharge SOLO",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                SizedBox(height: 6),
+                Text("50 € → 70 € (20 € offerts)"),
+                SizedBox(height: 8),
+                Text("Idéal 1 personne. Recharge valable au Drive Shakir."),
+              ],
+            ),
+          ),
+          const SizedBox(height: 18),
+
+          // Bouton Payer en caisse
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFD6B06E),
+                foregroundColor: const Color(0xFF3E2C20),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: const BorderSide(color: Color(0xFF3E2C20), width: 1),
+                ),
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text("Payer en caisse"),
+                    content: const Text(
+                      "Présentez ce choix à la caisse pour régler la recharge SOLO.\n"
+                      "Une fois réglée, votre solde sera crédité automatiquement.",
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text("OK"),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              icon: const Icon(Icons.store_mall_directory_rounded),
+              label: const Text("Payer en caisse"),
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // Bouton Paiement en ligne (prochainement)
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: sable,
+                side: BorderSide(color: sable, width: 1.2),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text("Paiement en ligne"),
+                    content: const Text(
+                      "Prochainement 🚀\nCB • PayPal • Google Pay\n\n"
+                      "Bientôt, vous pourrez recharger directement depuis l’application.",
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text("OK"),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              icon: const Icon(Icons.language_rounded),
+              label: const Text("Paiement en ligne (prochainement)"),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          Center(
+            child: TextButton.icon(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back),
+              label: const Text("Retour"),
+            ),
+          ),
         ],
       ),
     );
