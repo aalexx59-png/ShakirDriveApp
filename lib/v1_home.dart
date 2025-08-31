@@ -5,10 +5,8 @@ class V1Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Numéro attribué (exemple)
     const int numeroClient = 1111;
 
-    // Petite numérologie: somme des chiffres
     final int somme = numeroClient
         .toString()
         .split('')
@@ -16,13 +14,13 @@ class V1Home extends StatelessWidget {
         .reduce((a, b) => a + b);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFF8B5E3C), // sable/marron doux
+      backgroundColor: const Color(0xFFFF8B5E3C), // fond sable/marron
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "Bienvenue dans la Famille de cœur 🤝",
+              "Bienvenue dans la Famille de cœur 💛",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 22,
@@ -30,7 +28,6 @@ class V1Home extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-
             const SizedBox(height: 20),
 
             // Bloc numéro attribué
@@ -45,18 +42,12 @@ class V1Home extends StatelessWidget {
                 children: [
                   const Text(
                     "🎉 Félicitations 🎉",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
                   const Text(
                     "Vous êtes le numéro",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
                   ),
                   Text(
                     numeroClient.toString(),
@@ -75,25 +66,36 @@ class V1Home extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 28),
 
-            // Bouton vers le choix des offres
+            // Bouton pour aller vers V1 BIS
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber,
+                backgroundColor: Colors.amber, // style doré
                 foregroundColor: Colors.black,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                elevation: 2,
               ),
               onPressed: () {
-                Navigator.pushNamed(context, '/card-choice');
+                Navigator.pushNamed(context, '/home-bis');
               },
               child: const Text(
-                "Voir les offres 🍽️",
-                style: TextStyle(fontSize: 18),
+                "Compléter mon profil",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Bouton pour voir les offres (si tu veux le garder)
+            TextButton(
+              onPressed: () => Navigator.pushNamed(context, '/card-choice'),
+              child: const Text(
+                "Voir les offres »",
+                style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
           ],
