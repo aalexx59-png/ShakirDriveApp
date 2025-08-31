@@ -1,6 +1,6 @@
 name: shakir_drive_app
-description: SHAKIR DRIVE – version simple
-publish_to: 'none'
+description: Première version simple — Shakir Drive
+publish_to: "none"
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -8,23 +8,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
-  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^3.0.1
 
 flutter:
   uses-material-design: true
+
   assets:
     - assets/images/
     - assets/icon/shakir_drive.png
-
-# Génération des icônes Android à partir de ton logo
-flutter_icons:
-  android: true
-  ios: false
-  image_path_android: "assets/icon/shakir_drive.png"
-  adaptive_icon_background: "#C87137"   # sable
-  adaptive_icon_foreground: "assets/icon/shakir_drive.png"
