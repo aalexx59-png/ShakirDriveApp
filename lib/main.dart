@@ -1,11 +1,30 @@
 import 'package:flutter/material.dart';
 
-// Tes écrans (tous dans lib/)
+// V0 – Ecran QR de bienvenue
 import 'v0_welcome.dart';
+
+// V1 – Accueil (numéro attribué + bouton "Voir les offres")
 import 'v1_home.dart';
-import 'v1bis_home.dart';
-import 'v2_account.dart';
+
+// Choix des recharges (solo/family) + écrans dédiés
 import 'card_choice_page.dart';
+import 'solo_card_page.dart';
+import 'family_card_page.dart';
+
+// V4 – Mini-jeu + bandeau clignotant
+import 'v4_fun_game.dart';
+
+// V5 – Satisfaction client (3 smileys)
+import 'v5_feedback_page.dart';
+
+// V6 – Offres Drive (3 couscous + suppléments)
+import 'v6_offers_page.dart';
+
+// V7 – Promotions spéciales (anniv, fêtes, Ramadan…)
+import 'v7_special_events_page.dart';
+
+// V8 – Gagnant de la semaine (numéro + repas offert)
+import 'v8_week_winner_page.dart';
 
 void main() {
   runApp(const ShakirDriveApp());
@@ -16,47 +35,47 @@ class ShakirDriveApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const sable = Color(0xFF8B5E3C);
+
     return MaterialApp(
       title: 'Shakir Drive',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.brown,
-        scaffoldBackgroundColor: Colors.orange.shade50,
+        scaffoldBackgroundColor: const Color(0xFFF8B5E3C), // sable/orangé doux
+        appBarTheme: const AppBarTheme(
+          backgroundColor: sable,
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+        useMaterial3: false,
       ),
+
+      /// Point d’entrée : V0 (scan QR)
       initialRoute: '/',
+
+      /// Routes déclarées
       routes: {
-        '/': (context) => const SplashScreen(),     // Affiche V0 pendant 3s
-        '/welcome': (context) => const V0Welcome(), // (optionnel si tu veux y revenir)
-        '/home': (context) => const V1Home(),       // Accueil (numéro + bouton)
-        '/home-bis': (context) => const V1BisHome(),// Profil + tirage
-        '/account': (context) => const V2Account(), // Mon compte (historique + paiements)
-        '/card-choice': (context) => const CardChoicePage(), // Offres / recharges
+        // V0
+        '/': (context) => const V0Welcome(),
+
+        // V1
+        '/home': (context) => const V1Home(),
+
+        // Choix et écrans de recharges
+        '/card-choice': (context) => const CardChoicePage(),
+        '/solo': (context) => const SoloCardPage(),
+        '/family': (context) => const FamilyCardPage(),
+
+        // V4 / V5 / V6 / V7
+        '/game': (context) => const V4FunGame(),
+        '/feedback': (context) => const V5FeedbackPage(),
+        '/offers': (context) => const V6OffersPage(),
+        '/specials': (context) => const V7SpecialEventsPage(),
+
+        // V8 (le numéro gagnant est récupéré via `arguments` dans la page)
+        '/winner': (context) => const V8WeekWinnerPage(),
       },
     );
-  }
-}
-
-/// SplashScreen : montre V0Welcome puis redirige vers V1 après 3s.
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/home'); // → V1 (pas de transition V1→V1BIS)
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // On réutilise directement ton écran V0 comme “splash”
-    return const V0Welcome();
   }
 }
