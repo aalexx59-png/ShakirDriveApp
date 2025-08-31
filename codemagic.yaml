@@ -4,27 +4,16 @@ workflows:
     max_build_duration: 60
     environment:
       flutter: stable
-      vars:
-        ANDROID_HOME: /opt/android-sdk
-    cache:
-      cache_paths:
-        - $HOME/.pub-cache
-        - android/.gradle
+      java: 17
+      xcode: latest
     scripts:
-      - name: Flutter clean & pub get
-        script: |
-          flutter --version
-          flutter clean
-          flutter pub get
+      - name: Get dependencies
+        script: flutter pub get
       - name: Build APK (release)
-        script: |
-          flutter build apk --release
+        script: flutter build apk --release
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
     publishing:
       email:
         recipients:
-          - aalexx59@gmail.com   # ← remplace par ton adresse
-        notify:
-          success: true
-          failure: true
+          - aalexx59@gmail.com
