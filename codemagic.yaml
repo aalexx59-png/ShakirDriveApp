@@ -1,28 +1,31 @@
 workflows:
   shakir_android:
     name: Shakir Android APK
+    max_build_duration: 60
     environment:
-      flutter: 3.19.6
+      flutter: stable    # Codemagic installera la dernière stable de Flutter
       vars:
         APP_NAME: "SHAKIR DRIVE"
     scripts:
-      - name: Flutter clean & deps
+      - name: Flutter doctor (optionnel)
         script: |
           flutter --version
-          flutter clean
-          flutter pub get
-      - name: Build release APK
+          flutter doctor -v
+      - name: Get packages
         script: |
-          cd android
-          ./gradlew clean
-          cd ..
+          flutter pub get
+      - name: Build release APK (Flutter)
+        script: |
+          # Nettoyage léger (optionnel)
+          flutter clean
+          # Compile l'APK en mode release
           flutter build apk --release
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
     publishing:
       email:
         recipients:
-          - aaalexx59@gmail.com
+          - aalexx59@gmail.com   # <- ton adresse e-mail
         notify:
           success: true
           failure: true
