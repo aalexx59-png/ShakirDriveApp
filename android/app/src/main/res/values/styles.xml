@@ -1,5 +1,11 @@
 <resources>
-    <style name="NormalTheme" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowFullscreen">false</item>
+    <!-- Thème pendant le lancement (fond uni) -->
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@drawable/launch_background</item>
+    </style>
+
+    <!-- Thème de l’app après le démarrage -->
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@android:color/white</item>
     </style>
 </resources>
