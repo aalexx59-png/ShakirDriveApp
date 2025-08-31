@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 
-// === Écrans (tous dans lib/) ===
-import 'v0_welcome.dart';              // V0 : Bienvenue + QR (visuel d'accueil)
+// === V0 → V8 & pages associées (tous doivent exister dans lib/) ===
+import 'v0_welcome.dart';              // V0 : Bienvenue + QR (visuel)
 import 'v1_home.dart';                 // V1 : Accueil (numéro + boutons)
 import 'v1bis_home.dart';              // V1 BIS : Profil + tirage hebdo
 import 'v2_account.dart';              // V2 : Mon compte (historique + paiements)
-import 'v3_balance.dart';              // V3 : Solde + dernier paiement (option écran dédié)
-import 'v4_fun_game.dart';             // V4 : Mini-jeu + bandeau “JOUER…”
+import 'v3_balance.dart';              // V3 : Solde + dernier paiement
+import 'v4_fun_game.dart';             // V4 : Mini-jeu + bandeau
 import 'v5_feedback.dart';             // V5 : Satisfaction (3 smileys)
-import 'v6_offers_page.dart';          // V6 : Offres Drive (3 plats + suppléments)
-import 'v7_special_promos_page.dart';  // V7 : Promotions spéciales (Anniv / Fêtes / Ramadan)
+import 'v6_offers_page.dart';          // V6 : Offres Drive (plats + suppléments)
+import 'v7_special_promos_page.dart';  // V7 : Promotions spéciales
 import 'v8_week_winner_page.dart';     // V8 : Gagnant de la semaine
-import 'v_qr_pay.dart';                // QR à montrer au Drive pour payer via solde
 
-// Recharges / Offres (si déjà créés)
+// QR paiement
+import 'v_qr_pay.dart';
+
+// Recharges
 import 'card_choice_page.dart';
 import 'solo_card_page.dart';
 import 'family_card_page.dart';
@@ -43,11 +45,11 @@ class ShakirDriveApp extends StatelessWidget {
         useMaterial3: false,
       ),
 
-      // Point d’entrée : Splash qui affiche V0 pendant 3s puis va vers V1
+      // Démarre sur un Splash qui affiche V0 puis redirige vers V1 après 3s
       initialRoute: '/',
 
       routes: {
-        // Splash intégré dans ce fichier (voir classe en bas)
+        // Splash (ci-dessous)
         '/': (context) => const SplashScreen(),
 
         // V0 → V8
@@ -65,7 +67,7 @@ class ShakirDriveApp extends StatelessWidget {
         // QR de paiement (à montrer au Drive)
         '/qr-pay'        : (context) => const VQrPay(),
 
-        // Recharges / choix
+        // Recharges
         '/card-choice'   : (context) => const CardChoicePage(),
         '/solo'          : (context) => const SoloCardPage(),
         '/family'        : (context) => const FamilyCardPage(),
@@ -74,9 +76,9 @@ class ShakirDriveApp extends StatelessWidget {
   }
 }
 
-/// SplashScreen : montre V0Welcome (écran “Bienvenue + QR visuel”)
+/// SplashScreen : réutilise V0Welcome comme écran d’accueil,
 /// puis redirige automatiquement vers V1 (Accueil) après 3 secondes.
-/// (Pas de transition auto V1 → V1BIS : l’utilisateur choisit via un bouton.)
+/// (Aucune transition auto V1 → V1BIS : l’utilisateur choisit via un bouton.)
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
   @override
@@ -95,7 +97,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // On réutilise directement ton V0 comme contenu du splash
     return const V0Welcome();
   }
 }
