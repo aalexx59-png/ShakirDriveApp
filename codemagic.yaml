@@ -4,9 +4,11 @@ workflows:
     max_build_duration: 60
     environment:
       flutter: stable
+      java: 17
       vars:
-        APP_PACKAGE: "com.shakirdriveapp"
+        APP_ID: "com.shakirdriveapp"
         APP_NAME: "SHAKIR DRIVE"
+
     triggering:
       events:
         - push
@@ -16,27 +18,48 @@ workflows:
           source: true
 
     scripts:
-      # 1) Nettoyer ce qui pourrait gêner
+      # 1) Nettoyage léger
       - name: Clean repository
         script: |
+          git reset --hard
           git clean -fdx
 
-      # 2) Regénérer **Android** propre (embedding v2 + gradle wrapper)
+      # 2) Recréer **uniquement** le dossier android (embedding v2 + gradle wrapper)
       - name: Recreate fresh Android directory (embedding v2)
         script: |
           rm -rf android
           flutter --version
-          flutter create . --platforms=android --org $APP_PACKAGE -a kotlin
+          # recrée android/ pour le projet courant (garde lib/, assets/, pubspec.yaml)
+          flutter create . --platforms=android -a kotlin
           flutter pub get
 
-      # 3) Ajuster le nom d’appli pour l’icône/launcher (facultatif)
-      - name: Set Android app label
+      # 3) Forcer l'applicationId + namespace dans build.gradle (AGP modernes)
+      - name: Set applicationId and namespace
+        script: |
+          APP_BUILD_GRADLE="android/app/build.gradle"
+          # applicationId
+          if grep -q 'applicationId' "$APP_BUILD_GRADLE"; then
+            sed -i 's/applicationId "[^"]*"/applicationId "'$APP_ID'"/' "$APP_BUILD_GRADLE"
+          else
+            sed -i 's/defaultConfig {/defaultConfig {\n        applicationId "'$APP_ID'"/' "$APP_BUILD_GRADLE"
+          fi
+          # namespace (peut être dans build.gradle ou build.gradle.kts selon versions)
+          if grep -q '^namespace ' "$APP_BUILD_GRADLE"; then
+            sed -i 's/^namespace ".*"/namespace "'$APP_ID'"/' "$APP_BUILD_GRADLE"
+          else
+            sed -i '1s;^;namespace "'$APP_ID'"\n;' "$APP_BUILD_GRADLE"
+          fi
+          echo "=> applicationId + namespace forcés sur $APP_ID"
+
+      # 4) (Optionnel) Remplacer le label lisible dans le Manifest
+      - name: Set Android app label (optional)
         script: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
-          sed -i.bak 's/android:label="[^"]*"/android:label="'"$APP_NAME"'"/' "$MANIFEST" || true
-          echo "App label set to: $APP_NAME"
+          # remplace n'importe quelle valeur de android:label="..."
+          sed -i 's/android:label="[^"]*"/android:label="'$APP_NAME'"/' "$MANIFEST" || true
+          echo "=> App label set to: $APP_NAME"
 
-      # 4) Construire l’APK (release)
+      # 5) Build APK (release)
       - name: Build release APK (Flutter)
         script: |
           flutter build apk --release
@@ -47,7 +70,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - "aalexx59@gmail.com"   # <-- mets ton adresse ici
+          - "aalexx59png@gmail.com"   # ← ton adresse
         notify:
           success: true
           failure: true
