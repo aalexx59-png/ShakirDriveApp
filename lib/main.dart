@@ -1,78 +1,286 @@
-        _RechargeCard(
-          title: 'Recharge Rapide',
-          subtitle: '10 000 XOF',
-          benefits: ['+ Bonus 2%', 'Activation immédiate'],
-        ),
-        SizedBox(height: 12),
-        _RechargeCard(
-          title: 'Recharge Maxi',
-          subtitle: '25 000 XOF',
-          benefits: ['+ Bonus 6%', 'Priorité support'],
-        ),
-      ],
+import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+void main() {
+  runApp(const ShakirDriveApp());
+}
+
+/// Palette “oriental moderne”
+class SDColors {
+  static const sand = Color(0xFFF0C998);
+  static const desert = Color(0xFFD89B61);
+  static const clay = Color(0xFFB56D3A);
+  static const night = Color(0xFF1F1B16);
+  static const mint = Color(0xFF00C2A8);
+  static const gold = Color(0xFFE2B857);
+}
+
+ThemeData shakirTheme() {
+  final base = ThemeData(
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: SDColors.clay,
+      primary: SDColors.clay,
+      secondary: SDColors.mint,
+      background: SDColors.sand,
+      brightness: Brightness.light,
+    ),
+    scaffoldBackgroundColor: SDColors.sand,
+    useMaterial3: true,
+  );
+
+  return base.copyWith(
+    textTheme: GoogleFonts.cairoTextTheme(base.textTheme).apply(
+      bodyColor: SDColors.night,
+      displayColor: SDColors.night,
+    ),
+    appBarTheme: AppBarTheme(
+      backgroundColor: SDColors.sand,
+      elevation: 0,
+      centerTitle: true,
+      titleTextStyle: GoogleFonts.cairo(
+        fontWeight: FontWeight.w700,
+        fontSize: 20,
+        color: SDColors.night,
+        letterSpacing: 0.2,
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: SDColors.clay,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: Colors.white,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(color: SDColors.desert.withOpacity(.4)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: SDColors.clay, width: 1.6),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    ),
+    cardTheme: CardTheme(
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+    ),
+  );
+}
+
+class ShakirDriveApp extends StatelessWidget {
+  const ShakirDriveApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Shakir Drive',
+      debugShowCheckedModeBanner: false,
+      theme: shakirTheme(),
+      home: const RootTabs(),
     );
   }
 }
 
-class _RechargeCard extends StatelessWidget {
+/// Onglets principaux
+class RootTabs extends StatefulWidget {
+  const RootTabs({super.key});
+
+  @override
+  State<RootTabs> createState() => _RootTabsState();
+}
+
+class _RootTabsState extends State<RootTabs> with TickerProviderStateMixin {
+  int index = 0;
+  late final pages = [
+    const HomeScreen(),
+    const RechargeScreen(),
+    const GameScreen(),
+    const ProfileScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+        child: pages[index],
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: index,
+        onDestinationSelected: (i) => setState(() => index = i),
+        backgroundColor: SDColors.sand,
+        indicatorColor: SDColors.gold.withOpacity(.25),
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Accueil'),
+          NavigationDestination(icon: Icon(Icons.credit_card_outlined), selectedIcon: Icon(Icons.credit_card), label: 'Recharge'),
+          NavigationDestination(icon: Icon(Icons.games_outlined), selectedIcon: Icon(Icons.games), label: 'Jeu'),
+          NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: 'Profil'),
+        ],
+      ),
+    );
+  }
+}
+
+/// Logo animé + accueil
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        children: [
+          const SizedBox(height: 10),
+          const Center(child: AnimatedLogo(size: 128)),
+          const SizedBox(height: 14),
+          Center(
+            child: Text(
+              "SHAKIR DRIVE",
+              style: GoogleFonts.cairo(
+                fontSize: 28,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 2,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Center(
+            child: Text(
+              "Cartes prépayées • Recharges • Divertissement",
+              style: GoogleFonts.cairo(fontSize: 14, color: Colors.black54),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: 22),
+          _FeatureCard(
+            icon: Icons.credit_score,
+            title: "Paiement CB sécurisé",
+            subtitle: "Prêt à intégrer Stripe / PayPal",
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PaymentScreen(amount: 0))),
+          ),
+          _FeatureCard(
+            icon: Icons.bolt,
+            title: "Recharges rapides",
+            subtitle: "Deux montants dispo • 10€ & 25€",
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RechargeScreen())),
+          ),
+          _FeatureCard(
+            icon: Icons.sports_esports,
+            title: "Mini-jeu Chameau 🐫",
+            subtitle: "Tape pour sauter, évite les obstacles",
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GameScreen())),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FeatureCard extends StatelessWidget {
+  final IconData icon;
   final String title;
   final String subtitle;
-  final List<String> benefits;
-
-  const _RechargeCard({
-    required this.title,
-    required this.subtitle,
-    required this.benefits,
-  });
+  final VoidCallback onTap;
+  const _FeatureCard({required this.icon, required this.title, required this.subtitle, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 1.5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: SDColors.gold.withOpacity(.25),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                padding: const EdgeInsets.all(14),
+                child: Icon(icon, color: SDColors.clay, size: 28),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(title, style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 4),
+                  Text(subtitle, style: GoogleFonts.cairo(color: Colors.black54)),
+                ]),
+              ),
+              const Icon(Icons.chevron_right),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Page Recharge (2 montants + paiement)
+class RechargeScreen extends StatelessWidget {
+  const RechargeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Recharger")),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const SizedBox(height: 12),
+          _RechargeTile(amount: 10),
+          _RechargeTile(amount: 25),
+          const SizedBox(height: 24),
+          const _CBLogosRow(),
+          const SizedBox(height: 8),
+          Text(
+            "Paiement CB maquetté (démo).\nPour la prod, branche Stripe/PayPal et remplace PaymentScreen par un vrai formulaire / SDK.",
+            style: GoogleFonts.cairo(color: Colors.black54, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RechargeTile extends StatelessWidget {
+  final int amount;
+  const _RechargeTile({required this.amount});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Row(
-              children: [
-                const Icon(Icons.bolt, size: 28),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(title, style: const TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.w800)),
-                ),
-                Text(subtitle, style: const TextStyle(fontWeight: FontWeight.w700)),
-              ],
+            const Icon(Icons.add_card, size: 30, color: SDColors.clay),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text("Recharge ${amount}€", style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.w700)),
             ),
-            const SizedBox(height: 8),
-            ...benefits.map((b) => Row(
-              children: [
-                const Icon(Icons.check_circle, size: 18, color: Colors.green),
-                const SizedBox(width: 6),
-                Text(b),
-              ],
-            )),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _showPaymentMock(context, 'Mobile Money'),
-                    icon: const Icon(Icons.phone_android),
-                    label: const Text('Payer Mobile Money'),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: () => _showPaymentMock(context, 'Carte Bancaire'),
-                    icon: const Icon(Icons.credit_card),
-                    label: const Text('Payer Carte'),
-                  ),
-                ),
-              ],
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => PaymentScreen(amount: amount)));
+              },
+              icon: const Icon(Icons.lock),
+              label: const Text("Payer"),
             ),
           ],
         ),
@@ -81,9 +289,80 @@ class _RechargeCard extends StatelessWidget {
   }
 }
 
-/// —————————————————————————————
-/// 3) PROFIL : avatar large + nom editable
-/// —————————————————————————————
+class _CBLogosRow extends StatelessWidget {
+  const _CBLogosRow();
+
+  @override
+  Widget build(BuildContext context) {
+    // Logos stylisés (texte) pour rester sans assets CB.
+    final style = GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.w700, color: SDColors.night);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _cbBadge("VISA", Colors.blue),
+        _cbBadge("Mastercard", Colors.redAccent),
+        _cbBadge("CB", SDColors.mint),
+        Text("Paiement sécurisé", style: style),
+      ],
+    );
+  }
+
+  Widget _cbBadge(String text, Color c) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(color: c.withOpacity(.15), borderRadius: BorderRadius.circular(12)),
+        child: Text(text, style: GoogleFonts.cairo(fontWeight: FontWeight.w800, color: c)),
+      );
+}
+
+/// Flux paiement (démo) – ouvre un lien (ex: page Stripe Checkout test)
+class PaymentScreen extends StatelessWidget {
+  final int amount; // en €
+  const PaymentScreen({super.key, required this.amount});
+
+  @override
+  Widget build(BuildContext context) {
+    final uri = Uri.parse("https://example.com/pay?amount=$amount"); // TODO: remplace par ton lien Checkout
+    return Scaffold(
+      appBar: AppBar(title: const Text("Paiement CB")),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
+            const _CBLogosRow(),
+            const SizedBox(height: 18),
+            Text("Montant", style: GoogleFonts.cairo(fontSize: 16, color: Colors.black54)),
+            const SizedBox(height: 6),
+            Text("$amount €", style: GoogleFonts.cairo(fontSize: 40, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 18),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text("Paiement de démonstration", style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 6),
+                  Text(
+                    "Ici, branche un vrai prestataire (Stripe, PayPal…). "
+                    "Tu peux ouvrir une page de paiement hébergée (Checkout) avec url_launcher.",
+                    style: GoogleFonts.cairo(color: Colors.black54),
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton.icon(
+                    onPressed: () => launchUrl(uri, mode: LaunchMode.externalApplication),
+                    icon: const Icon(Icons.open_in_new),
+                    label: Text("Payer $amount €"),
+                  ),
+                ]),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Profil – avatar agrandi + champ nom (persisté)
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -91,9 +370,10 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin {
   final _ctrl = TextEditingController();
-  bool _loading = true;
+  String? _name;
+  late final AnimationController _anim = AnimationController(vsync: this, duration: const Duration(milliseconds: 800))..repeat(reverse: true);
 
   @override
   void initState() {
@@ -102,99 +382,202 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    _ctrl.text = prefs.getString('user_name') ?? '';
-    setState(() => _loading = false);
+    final sp = await SharedPreferences.getInstance();
+    setState(() {
+      _name = sp.getString('user_name');
+      _ctrl.text = _name ?? "";
+    });
   }
 
   Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_name', _ctrl.text.trim());
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nom enregistré ✅')),
-      );
-    }
+    final sp = await SharedPreferences.getInstance();
+    await sp.setString('user_name', _ctrl.text.trim());
+    setState(() => _name = _ctrl.text.trim());
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Nom enregistré")));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    _anim.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Center(child: CircularProgressIndicator());
-
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Center(
-          child: CircleAvatar(
-            radius: 56,
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Image.asset('assets/icon/shakir_drive.png'),
+    final pulse = Tween(begin: 1.0, end: 1.06).animate(CurvedAnimation(parent: _anim, curve: Curves.easeInOut));
+    return Scaffold(
+      appBar: AppBar(title: const Text("Profil")),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const SizedBox(height: 10),
+          ScaleTransition(
+            scale: pulse,
+            child: CircleAvatar(
+              radius: 58,
+              backgroundColor: SDColors.gold.withOpacity(.35),
+              child: Text("SD", style: GoogleFonts.cairo(fontSize: 36, fontWeight: FontWeight.w800, color: SDColors.clay)),
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-        Center(
-          child: Text(
-            'Mon Profil',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          const SizedBox(height: 14),
+          Center(
+            child: Text(
+              _name?.isNotEmpty == true ? _name! : "Votre nom",
+              style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.w700),
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: _ctrl,
-          textInputAction: TextInputAction.done,
-          decoration: const InputDecoration(
-            labelText: 'Votre nom',
-            hintText: 'Entrez votre nom',
-            border: OutlineInputBorder(),
-            prefixIcon: Icon(Icons.badge_outlined),
+          const SizedBox(height: 18),
+          TextField(
+            controller: _ctrl,
+            textInputAction: TextInputAction.done,
+            decoration: const InputDecoration(labelText: "Entrer votre nom"),
+            onSubmitted: (_) => _save(),
           ),
-          onSubmitted: (_) => _save(),
-        ),
-        const SizedBox(height: 12),
-        FilledButton.icon(
-          onPressed: _save,
-          icon: const Icon(Icons.save_outlined),
-          label: const Text('Enregistrer'),
-        ),
-      ],
+          const SizedBox(height: 12),
+          ElevatedButton.icon(onPressed: _save, icon: const Icon(Icons.save), label: const Text("Enregistrer")),
+          const SizedBox(height: 24),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.privacy_tip_outlined),
+            title: const Text("Confidentialité"),
+            subtitle: const Text("Vos données restent sur l’appareil"),
+            onTap: () {},
+          ),
+        ],
+      ),
     );
   }
 }
 
-/// —————————————————————————————
-/// 4) MINI-JEU : Chameau 🐫 qui saute un cactus
-/// —————————————————————————————
-/// Gameplay très simple : appuyer pour sauter, éviter le cactus.
-/// (sans packages externes)
-class CamelGameScreen extends StatefulWidget {
-  const CamelGameScreen({super.key});
+/// Logo animé (rebond + halo)
+class AnimatedLogo extends StatefulWidget {
+  final double size;
+  const AnimatedLogo({super.key, this.size = 100});
 
   @override
-  State<CamelGameScreen> createState() => _CamelGameScreenState();
+  State<AnimatedLogo> createState() => _AnimatedLogoState();
 }
 
-class _CamelGameScreenState extends State<CamelGameScreen>
-    with SingleTickerProviderStateMixin {
-  static const double ground = 140;
-  static const double camelSize = 46;
-  static const double cactusWidth = 28;
+class _AnimatedLogoState extends State<AnimatedLogo> with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000))..repeat(reverse: true);
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _c,
+      builder: (_, __) {
+        final t = (sin(_c.value * pi) + 1) / 2; // 0..1
+        final glow = 6.0 + 10.0 * t;
+        return Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            boxShadow: [BoxShadow(color: SDColors.gold.withOpacity(.35), blurRadius: glow, spreadRadius: 1)],
+            shape: BoxShape.circle,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Image.asset(
+              'assets/icon/shakir_drive.png',
+              width: widget.size,
+              height: widget.size,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Icon(Icons.image_not_supported, size: widget.size, color: Colors.black26),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Mini-jeu chameau 🐫 – simple, fun & sans dépendance
+class GameScreen extends StatefulWidget {
+  const GameScreen({super.key});
+
+  @override
+  State<GameScreen> createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateMixin {
+  // Monde
+  double camelY = 0; // -1 (haut) -> 1 (bas)
+  double velocity = 0;
+  final gravity = 0.9;
+  bool running = false;
+  int score = 0;
+
+  // Obstacles (x de 1.5 -> -1.2)
+  final rnd = Random();
+  final List<double> obstacles = [1.5, 2.4, 3.3];
 
   late final Ticker _ticker;
-  double _vy = 0;            // vitesse verticale
-  double _y = ground;        // hauteur camel (du bas)
-  double _xCactus = 400;     // position cactus
-  bool _running = false;
-  int _score = 0;
-  final _rand = Random();
 
   @override
   void initState() {
     super.initState();
-    _y = ground;
     _ticker = createTicker(_tick);
+  }
+
+  void _start() {
+    setState(() {
+      camelY = 0;
+      velocity = 0;
+      score = 0;
+      running = true;
+      obstacles.setAll(0, [1.5, 2.4, 3.3]);
+    });
+    _ticker.start();
+  }
+
+  void _stop() {
+    running = false;
+    _ticker.stop();
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Oups 🐫"),
+        content: Text("Score : $score"),
+        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))],
+      ),
+    );
+  }
+
+  void _jump() {
+    if (!running) _start();
+    setState(() => velocity = -12); // saut
+  }
+
+  void _tick(Duration _) {
+    // Physique chameau
+    setState(() {
+      velocity += gravity * 0.9;
+      camelY += velocity * 0.0035;
+      camelY = camelY.clamp(-1.0, 1.0);
+    });
+
+    // Déplacement obstacles
+    for (var i = 0; i < obstacles.length; i++) {
+      obstacles[i] -= 0.012 + min(0.01, score * 0.0008); // accélère un peu
+      if (obstacles[i] < -1.2) {
+        obstacles[i] = 1.5 + rnd.nextDouble(); // respawn à droite
+        score++;
+      }
+    }
+
+    // Collision (zone proche x ~0, y proche du sol)
+    for (final x in obstacles) {
+      if ((x).abs() < 0.08 && camelY > 0.65) {
+        _stop();
+        break;
+      }
+    }
   }
 
   @override
@@ -203,158 +586,103 @@ class _CamelGameScreenState extends State<CamelGameScreen>
     super.dispose();
   }
 
-  void _start() {
-    setState(() {
-      _score = 0;
-      _y = ground;
-      _vy = 0;
-      _xCactus = 360 + _rand.nextInt(120);
-      _running = true;
-    });
-    _ticker.start();
-  }
-
-  void _jump() {
-    if (!_running) {
-      _start();
-      return;
-    }
-    if (_y <= ground + 0.1) {
-      // impulsion
-      _vy = 8.5;
-    }
-  }
-
-  void _tick(Duration elapsed) {
-    // dt “fixe” pour une anim simple ~60fps
-    const dt = 1 / 60.0;
-
-    // physique simple
-    _vy -= 20 * dt;          // gravité
-    _y += _vy;
-
-    if (_y < ground) {
-      _y = ground;
-      _vy = 0;
-    }
-
-    // déplacement cactus
-    _xCactus -= 160 * dt;
-    if (_xCactus < -cactusWidth) {
-      _xCactus = 360 + _rand.nextInt(180);
-      _score++;
-    }
-
-    // collision
-    final camelLeft = 40.0;
-    final camelRight = camelLeft + camelSize;
-    final cactusLeft = _xCactus;
-    final cactusRight = _xCactus + cactusWidth;
-    final camelBottom = _y;
-    final camelTop = _y + camelSize;
-
-    final overlapX = camelRight > cactusLeft && camelLeft < cactusRight;
-    final overlapY = camelBottom < (ground + cactusWidth) && camelTop > ground;
-
-    if (overlapX && overlapY) {
-      _ticker.stop();
-      _running = false;
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Oups 💥  Score: $_score')),
-        );
-      }
-    }
-
-    if (mounted) setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _jump,
-      child: Container(
-        color: Colors.orange.shade50,
-        child: Stack(
-          children: [
-            // sol
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(height: ground, color: Colors.brown.shade100),
+      child: Scaffold(
+        appBar: AppBar(title: const Text("Jeu du chameau")),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [SDColors.sand, Colors.white],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
-            // chameau
-            Positioned(
-              left: 40,
-              bottom: _y,
-              child: _Camel(),
-            ),
-            // cactus
-            Positioned(
-              left: _xCactus,
-              bottom: ground,
-              child: _Cactus(w: cactusWidth, h: 44),
-            ),
-            // score + bouton start
-            Positioned(
-              top: 12,
-              right: 12,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.9),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text('Score: $_score',
-                    style: const TextStyle(fontWeight: FontWeight.w700)),
-              ),
-            ),
-            if (!_running)
-              Center(
-                child: FilledButton.icon(
-                  onPressed: _start,
-                  icon: const Icon(Icons.play_arrow),
-                  label: const Text('Jouer'),
-                ),
-              ),
-          ],
+          ),
+          child: LayoutBuilder(
+            builder: (context, c) {
+              final h = c.maxHeight;
+              final w = c.maxWidth;
+
+              double mapY(double y) => h * (y + 1) / 2; // -1..1 -> pixels
+
+              return Stack(
+                children: [
+                  // Soleil décor
+                  Positioned(
+                    top: 40,
+                    right: 24,
+                    child: Container(
+                      width: 34,
+                      height: 34,
+                      decoration: const BoxDecoration(color: SDColors.gold, shape: BoxShape.circle),
+                    ),
+                  ),
+                  // Score
+                  Positioned(
+                    top: 16,
+                    left: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                      child: Text("Score: $score", style: GoogleFonts.cairo(fontWeight: FontWeight.w800)),
+                    ),
+                  ),
+                  // Sol
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: 90,
+                    child: Container(color: SDColors.desert.withOpacity(.35)),
+                  ),
+                  // Chameau 🐫
+                  Positioned(
+                    left: w * 0.25 - 24,
+                    top: mapY(camelY) - 24,
+                    child: Text("🐫", style: TextStyle(fontSize: 48, shadows: [
+                      Shadow(color: Colors.black.withOpacity(.15), blurRadius: 6, offset: const Offset(1, 2))
+                    ])),
+                  ),
+                  // Obstacles (dunes)
+                  ...obstacles.map((x) {
+                    final px = (x + 1) / 2 * w;
+                    return Positioned(
+                      left: px,
+                      bottom: 60,
+                      child: Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color: SDColors.clay,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    );
+                  }),
+                  // Invite
+                  if (!running)
+                    Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text("Tape pour sauter !", style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.w800)),
+                          const SizedBox(height: 6),
+                          Text("Évite les obstacles, gagne des points", style: GoogleFonts.cairo(color: Colors.black54)),
+                        ],
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
-      ),
-    );
-  }
-}
-
-class _Camel extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // icône “chameau” stylisée
-    return Container(
-      width: 46,
-      height: 46,
-      decoration: BoxDecoration(
-        color: Colors.brown.shade300,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const [BoxShadow(blurRadius: 6, color: Colors.black26)],
-      ),
-      alignment: Alignment.center,
-      child: const Text('🐫', style: TextStyle(fontSize: 24)),
-    );
-  }
-}
-
-class _Cactus extends StatelessWidget {
-  final double w;
-  final double h;
-  const _Cactus({required this.w, required this.h});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: w,
-      height: h,
-      decoration: BoxDecoration(
-        color: Colors.green.shade600,
-        borderRadius: BorderRadius.circular(6),
-        boxShadow: const [BoxShadow(blurRadius: 3, color: Colors.black26)],
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () => setState(() => running ? _stop() : _start()),
+          label: Text(running ? "Pause" : "Jouer"),
+          icon: Icon(running ? Icons.pause : Icons.play_arrow),
+        ),
       ),
     );
   }
