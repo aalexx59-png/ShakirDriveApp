@@ -1,7 +1,6 @@
 name: shakir_drive
-description: Shakir Drive – version simple
+description: Application Flutter - SHAKIR DRIVE
 publish_to: "none"
-
 version: 1.0.0+1
 
 environment:
@@ -10,22 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^4.0.0
-  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^3.0.2
 
 flutter:
   uses-material-design: true
   assets:
     - assets/icon/shakir_drive.png
-
-flutter_icons:
-  android: true
-  ios: false
-  image_path: "assets/icon/shakir_drive.png"
-  adaptive_icon_background: "#F09B3A"
-  adaptive_icon_foreground: "assets/icon/shakir_drive.png"
