@@ -1,19 +1,38 @@
 name: shakir_drive
-description: Application Flutter - SHAKIR DRIVE
+description: Application Flutter - Shakir DRIVE
 publish_to: "none"
+
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.8
+  url_launcher: ^6.3.0
 
 dev_dependencies:
+  flutter_test:
+    sdk: flutter
   flutter_lints: ^3.0.2
 
 flutter:
   uses-material-design: true
+
+  # 👉 Assure-toi que ces chemins/fichiers existent déjà dans ton repo
   assets:
     - assets/icon/shakir_drive.png
+    - assets/images/v0_welcome.png
+    - assets/images/v1_home.png
+    - assets/images/v1bis_profile.png
+    - assets/images/v2_family_card.png
+    - assets/images/v2_solo_card.jpg
+    - assets/images/v3_history.png
+    - assets/images/v4_fun_game.png
+    - assets/images/v5_feedback.png
+    - assets/images/v5bis_recharge_promo.png
+    - assets/images/v6_offers.png
+    - assets/images/v7_special.png
+    - assets/images/v8_winner.png
