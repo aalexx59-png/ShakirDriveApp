@@ -1,40 +1,43 @@
 workflows:
   shakir_android:
     name: Shakir Android APK
-    instance_type: mac_mini_m1
+    max_build_duration: 60
     environment:
       flutter: stable
       vars:
-        APP_ID: "com.shakirdriveapp"
-        APP_LABEL: "SHAKIR DRIVE"
+        APP_PACKAGE: "com.shakirdriveapp"
+        APP_NAME: "SHAKIR DRIVE"
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: "main"
+          include: true
+          source: true
+
     scripts:
-      - name: Préparer le projet Flutter/Android
+      # 1) Nettoyer ce qui pourrait gêner
+      - name: Clean repository
         script: |
+          git clean -fdx
+
+      # 2) Regénérer **Android** propre (embedding v2 + gradle wrapper)
+      - name: Recreate fresh Android directory (embedding v2)
+        script: |
+          rm -rf android
           flutter --version
-          # Crée/actualise la structure Android moderne si besoin (embedding v2 + gradle wrapper)
-          if [ ! -d "android" ] || [ ! -f "android/gradlew" ]; then
-            flutter create . --platforms=android --org $APP_ID
-          fi
-          chmod +x android/gradlew || true
-
-          # Forcer compileSdk/minSdk compatibles
-          sed -i.bak 's/compileSdk *[0-9]\+/compileSdk 34/' android/app/build.gradle || true
-          sed -i.bak 's/minSdkVersion *[0-9]\+/minSdkVersion 21/' android/app/build.gradle || true
-
-          # Mettre le label de l'application
-          MANIFEST=android/app/src/main/AndroidManifest.xml
-          if grep -q 'android:label=' "$MANIFEST"; then
-            sed -i.bak "s/android:label=\"[^\"]*\"/android:label=\"$APP_LABEL\"/" "$MANIFEST"
-          else
-            sed -i.bak "s/<application /<application android:label=\"$APP_LABEL\" /" "$MANIFEST"
-          fi
-
-      - name: Récupérer les paquets & générer l’icône
-        script: |
+          flutter create . --platforms=android --org $APP_PACKAGE -a kotlin
           flutter pub get
-          flutter pub run flutter_launcher_icons
 
-      - name: Construire l’APK release
+      # 3) Ajuster le nom d’appli pour l’icône/launcher (facultatif)
+      - name: Set Android app label
+        script: |
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          sed -i.bak 's/android:label="[^"]*"/android:label="'"$APP_NAME"'"/' "$MANIFEST" || true
+          echo "App label set to: $APP_NAME"
+
+      # 4) Construire l’APK (release)
+      - name: Build release APK (Flutter)
         script: |
           flutter build apk --release
 
@@ -44,5 +47,7 @@ workflows:
     publishing:
       email:
         recipients:
-          # ➜ Remplace par TON email
-          - aalexx59@gmail.com
+          - "aalexx59@gmail.com"   # <-- mets ton adresse ici
+        notify:
+          success: true
+          failure: true
