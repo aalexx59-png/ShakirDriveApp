@@ -1,75 +1,42 @@
 workflows:
   shakir_android:
     name: Shakir Android APK
-    max_build_duration: 60
+    instance_type: mac_mini_m1
     environment:
-      flutter: stable            # Codemagic installera Flutter stable
+      flutter: stable
       vars:
+        APP_ID: "com.shakirdriveapp"
         APP_LABEL: "SHAKIR DRIVE"
     scripts:
-      # 1) Vérif
-      - echo "Flutter version:" && flutter --version
-
-      # 2) Sauvegarder les icônes si tu les as dans le repo
-      - |
-        echo "Saving launcher icons (if any)…"
-        mkdir -p /tmp/shakir_icons
-        for d in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
-          if [ -d "android/app/src/main/res/$d" ]; then
-            mkdir -p "/tmp/shakir_icons/$d"
-            cp -f android/app/src/main/res/$d/ic_launcher.png "/tmp/shakir_icons/$d/" 2>/dev/null || true
+      - name: Préparer le projet Flutter/Android
+        script: |
+          flutter --version
+          # Crée/actualise la structure Android moderne si besoin (embedding v2 + gradle wrapper)
+          if [ ! -d "android" ] || [ ! -f "android/gradlew" ]; then
+            flutter create . --platforms=android --org $APP_ID
           fi
-        done
-        # splash bg (optionnel)
-        if [ -f "android/app/src/main/res/drawable/launch_background.xml" ]; then
-          mkdir -p /tmp/shakir_drawable
-          cp -f android/app/src/main/res/drawable/launch_background.xml /tmp/shakir_drawable/ 2>/dev/null || true
-        fi
+          chmod +x android/gradlew || true
 
-      # 3) Supprimer l'ancien dossier android et recréer un projet Android moderne (embedding v2 + gradlew)
-      - |
-        echo "Recreating modern Android folder…"
-        rm -rf android
-        flutter create --platforms=android .  # recrée android/, gradlew, wrapper, manifest v2, etc.
+          # Forcer compileSdk/minSdk compatibles
+          sed -i.bak 's/compileSdk *[0-9]\+/compileSdk 34/' android/app/build.gradle || true
+          sed -i.bak 's/minSdkVersion *[0-9]\+/minSdkVersion 21/' android/app/build.gradle || true
 
-      # 4) Remettre les icônes sauvegardées (si on en avait)
-      - |
-        echo "Restoring launcher icons (if saved)…"
-        for d in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
-          if [ -f "/tmp/shakir_icons/$d/ic_launcher.png" ]; then
-            cp -f "/tmp/shakir_icons/$d/ic_launcher.png" "android/app/src/main/res/$d/ic_launcher.png"
+          # Mettre le label de l'application
+          MANIFEST=android/app/src/main/AndroidManifest.xml
+          if grep -q 'android:label=' "$MANIFEST"; then
+            sed -i.bak "s/android:label=\"[^\"]*\"/android:label=\"$APP_LABEL\"/" "$MANIFEST"
+          else
+            sed -i.bak "s/<application /<application android:label=\"$APP_LABEL\" /" "$MANIFEST"
           fi
-        done
-        if [ -f "/tmp/shakir_drawable/launch_background.xml" ]; then
-          mkdir -p android/app/src/main/res/drawable
-          cp -f /tmp/shakir_drawable/launch_background.xml android/app/src/main/res/drawable/launch_background.xml
-        fi
 
-      # 5) Forcer Java 17 + AGP compatibles dans gradle.properties et app/build.gradle
-      - |
-        echo "Patching Gradle settings (Java 17)…"
-        echo "org.gradle.jvmargs=-Xmx2g -Dfile.encoding=UTF-8" >> android/gradle.properties
-        echo "android.useAndroidX=true" >> android/gradle.properties
-        echo "android.enableJetifier=true" >> android/gradle.properties
+      - name: Récupérer les paquets & générer l’icône
+        script: |
+          flutter pub get
+          flutter pub run flutter_launcher_icons
 
-        # compileSdk/minSdk/Java 17 dans app/build.gradle.kts OU build.gradle (selon version créée)
-        APP_GRADLE="$(ls android/app | grep -E 'build.gradle(\\.kts)?')"
-        sed -i.bak 's/minSdk = [0-9][0-9]*/minSdk = 21/' "android/app/$APP_GRADLE" 2>/dev/null || true
-        sed -i.bak 's/JavaVersion.VERSION_1[1-9]/JavaVersion.VERSION_17/g' "android/app/$APP_GRADLE" 2>/dev/null || true
-
-      # 6) Changer le nom visible de l’app dans le Manifest (facultatif)
-      - |
-        echo "Setting app label…"
-        MANIFEST=android/app/src/main/AndroidManifest.xml
-        if grep -q 'android:label=' "$MANIFEST"; then
-          sed -i.bak 's/android:label="[^"]*"/android:label="'"$APP_LABEL"'"/' "$MANIFEST"
-        else
-          sed -i.bak 's/<application /<application android:label="'"$APP_LABEL"'" /' "$MANIFEST"
-        fi
-
-      # 7) Récup dépendances puis build
-      - flutter pub get
-      - flutter build apk --release
+      - name: Construire l’APK release
+        script: |
+          flutter build apk --release
 
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
@@ -77,7 +44,5 @@ workflows:
     publishing:
       email:
         recipients:
-          - aalexx59.png@gmail.com      # <- ton email pour recevoir l’APK
-        notify:
-          success: true
-          failure: true
+          # ➜ Remplace par TON email
+          - aalexx59@gmail.com
