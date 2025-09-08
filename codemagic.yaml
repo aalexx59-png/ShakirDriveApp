@@ -2,52 +2,16 @@ workflows:
   shakir_android:
     name: Shakir Android APK
     max_build_duration: 60
-    instance_type: mac_mini_m1
-
     environment:
       flutter: stable
-      vars:
-        APP_ID: "com.shakirdriveapp"
-        RECIPIENT_EMAIL: "aalexx59@gmail.com"
-
-      # (optionnel) cache pour accélérer
-      cache:
-        cache_paths:
-          - ~/.pub-cache
-          - $FCI_BUILD_DIR/.dart_tool
-          - $FCI_BUILD_DIR/build
-
     scripts:
-      - name: Afficher versions
-        script: |
-          flutter --version
-          dart --version
-          java -version || true
-          echo "AppId: $APP_ID"
-
-      - name: Préparer plateforme Android (répare android/ & gradlew si besoin)
-        script: |
-          # Crée/complète la plateforme Android sans écraser ton code Dart
-          flutter create . --platforms=android
-          # Vérification
-          test -f android/gradlew && echo "Gradle wrapper OK" || (echo "Pas de gradlew"; exit 1)
-
-      - name: Récupérer les dépendances
+      - name: Get Flutter packages
         script: flutter pub get
-
-      - name: Build APK release (non signé)
-        script: |
-          flutter build apk --release --dart-define=BUILD_BY=codemagic
-          ls -lah build/app/outputs/flutter-apk || true
-
+      - name: Build release APK
+        script: flutter build apk --release
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
-      - build/**/outputs/**/*.apk
-
     publishing:
       email:
         recipients:
-          - $RECIPIENT_EMAIL
-        notify:
-          success: true
-          failure: true
+          - aalexx59@gmail.com   # remplace ici par ton vrai email
