@@ -48,6 +48,6 @@ workflows:
     publishing:
       email:
         recipients:
-          - VOTRE_EMAIL_ICI
+          - aalexx59@gmail.com
         subject: "SHAKIR DRIVE - APK"
         body: "APK de SHAKIR DRIVE généré avec succès."
