@@ -1,5 +1,5 @@
 name: shakir_drive
-description: Shakir Drive – cartes prépayées, recharges et mini-jeu 🐫
+description: Application Flutter - SHAKIR DRIVE (prépayée)
 publish_to: "none"
 
 environment:
@@ -8,15 +8,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
-  google_fonts: ^6.2.1
-  url_launcher: ^6.3.0
-  shared_preferences: ^2.3.2
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^3.0.2
 
 flutter:
   uses-material-design: true
