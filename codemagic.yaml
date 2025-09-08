@@ -4,73 +4,23 @@ workflows:
     max_build_duration: 60
     environment:
       flutter: stable
-      java: 17
       vars:
-        APP_ID: "com.shakirdriveapp"
-        APP_NAME: "SHAKIR DRIVE"
-
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: "main"
-          include: true
-          source: true
-
+        PACKAGE_NAME: "com.shakirdriveapp"
     scripts:
-      # 1) Nettoyage léger
-      - name: Clean repository
+      - name: Flutter clean & deps
         script: |
-          git reset --hard
-          git clean -fdx
-
-      # 2) Recréer **uniquement** le dossier android (embedding v2 + gradle wrapper)
-      - name: Recreate fresh Android directory (embedding v2)
-        script: |
-          rm -rf android
           flutter --version
-          # recrée android/ pour le projet courant (garde lib/, assets/, pubspec.yaml)
-          flutter create . --platforms=android -a kotlin
+          flutter clean
           flutter pub get
-
-      # 3) Forcer l'applicationId + namespace dans build.gradle (AGP modernes)
-      - name: Set applicationId and namespace
-        script: |
-          APP_BUILD_GRADLE="android/app/build.gradle"
-          # applicationId
-          if grep -q 'applicationId' "$APP_BUILD_GRADLE"; then
-            sed -i 's/applicationId "[^"]*"/applicationId "'$APP_ID'"/' "$APP_BUILD_GRADLE"
-          else
-            sed -i 's/defaultConfig {/defaultConfig {\n        applicationId "'$APP_ID'"/' "$APP_BUILD_GRADLE"
-          fi
-          # namespace (peut être dans build.gradle ou build.gradle.kts selon versions)
-          if grep -q '^namespace ' "$APP_BUILD_GRADLE"; then
-            sed -i 's/^namespace ".*"/namespace "'$APP_ID'"/' "$APP_BUILD_GRADLE"
-          else
-            sed -i '1s;^;namespace "'$APP_ID'"\n;' "$APP_BUILD_GRADLE"
-          fi
-          echo "=> applicationId + namespace forcés sur $APP_ID"
-
-      # 4) (Optionnel) Remplacer le label lisible dans le Manifest
-      - name: Set Android app label (optional)
-        script: |
-          MANIFEST="android/app/src/main/AndroidManifest.xml"
-          # remplace n'importe quelle valeur de android:label="..."
-          sed -i 's/android:label="[^"]*"/android:label="'$APP_NAME'"/' "$MANIFEST" || true
-          echo "=> App label set to: $APP_NAME"
-
-      # 5) Build APK (release)
       - name: Build release APK (Flutter)
         script: |
           flutter build apk --release
-
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
-
     publishing:
       email:
         recipients:
-          - "aalexx59png@gmail.com"   # ← ton adresse
+          - aale...@gmail.com   # <-- mets ton e-mail exact ici
         notify:
           success: true
           failure: true
