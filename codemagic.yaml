@@ -2,52 +2,52 @@ workflows:
   shakir_android:
     name: Shakir Android APK
     max_build_duration: 60
+    instance_type: mac_mini_m1
+
     environment:
       flutter: stable
+      vars:
+        APP_ID: "com.shakirdriveapp"
+        RECIPIENT_EMAIL: "aalexx59@gmail.com"
+
+      # (optionnel) cache pour accélérer
+      cache:
+        cache_paths:
+          - ~/.pub-cache
+          - $FCI_BUILD_DIR/.dart_tool
+          - $FCI_BUILD_DIR/build
+
     scripts:
-      - name: Clean & get dependencies
+      - name: Afficher versions
         script: |
           flutter --version
-          flutter clean
-          flutter pub get
+          dart --version
+          java -version || true
+          echo "AppId: $APP_ID"
 
-      - name: Recreate modern Android folder (Embedding v2)
+      - name: Préparer plateforme Android (répare android/ & gradlew si besoin)
         script: |
-          # On supprime l'ancien dossier android (incomplet/v1)
-          rm -rf android
-          # On recrée la plateforme Android moderne (embedding v2 + gradlew)
-          flutter create --platforms=android .
+          # Crée/complète la plateforme Android sans écraser ton code Dart
+          flutter create . --platforms=android
+          # Vérification
+          test -f android/gradlew && echo "Gradle wrapper OK" || (echo "Pas de gradlew"; exit 1)
 
-      - name: Set package id, app label and icon
+      - name: Récupérer les dépendances
+        script: flutter pub get
+
+      - name: Build APK release (non signé)
         script: |
-          python3 - <<'PY'
-          import re, io, os
-
-          # 1) applicationId dans android/app/build.gradle
-          p = 'android/app/build.gradle'
-          s = open(p, 'r', encoding='utf-8').read()
-          s = re.sub(r'applicationId\s+"[^"]+"', 'applicationId "com.shakirdriveapp"', s)
-          open(p, 'w', encoding='utf-8').write(s)
-
-          # 2) label + icône dans AndroidManifest.xml
-          p = 'android/app/src/main/AndroidManifest.xml'
-          s = open(p, 'r', encoding='utf-8').read()
-          s = re.sub(r'android:label="[^"]+"', 'android:label="SHAKIR DRIVE"', s)
-          # On garde ic_launcher (les mipmaps par défaut existent)
-          s = re.sub(r'android:icon="@mipmap/ic_launcher"', 'android:icon="@mipmap/ic_launcher"', s)
-          open(p, 'w', encoding='utf-8').write(s)
-          PY
-
-      - name: Build release APK (Flutter)
-        script: |
-          flutter build apk --release
+          flutter build apk --release --dart-define=BUILD_BY=codemagic
+          ls -lah build/app/outputs/flutter-apk || true
 
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
+      - build/**/outputs/**/*.apk
 
     publishing:
       email:
         recipients:
-          - aalexx59@gmail.com
-        subject: "SHAKIR DRIVE - APK"
-        body: "APK de SHAKIR DRIVE généré avec succès."
+          - $RECIPIENT_EMAIL
+        notify:
+          success: true
+          failure: true
