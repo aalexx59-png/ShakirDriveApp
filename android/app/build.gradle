@@ -1,49 +1,34 @@
-// android/app/build.gradle (Module: app)
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'dev.flutter.flutter-gradle-plugin'
 }
 
 android {
     namespace "com.shakirdriveapp"
-    compileSdk 34
+    compileSdkVersion 34
 
     defaultConfig {
         applicationId "com.shakirdriveapp"
-        minSdk 21
-        targetSdk 34
+        minSdkVersion 21
+        targetSdkVersion 34
         versionCode 1
-        versionName "1.0.0"
-        multiDexEnabled true
+        versionName "1.0"
     }
 
     buildTypes {
         release {
-            // Simplifié pour le premier build
+            signingConfig signingConfigs.debug
             minifyEnabled false
             shrinkResources false
-            signingConfig signingConfigs.debug
-        }
-        debug {
-            debuggable true
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = '17'
-    }
-
-    packagingOptions {
-        resources {
-            excludes += ['/META-INF/{AL2.0,LGPL2.1}']
         }
     }
 }
 
+flutter {
+    source '../..'
+}
+
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.24"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
