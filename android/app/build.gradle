@@ -1,34 +1,48 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
-    id 'dev.flutter.flutter-gradle-plugin'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
     namespace "com.shakirdriveapp"
-    compileSdkVersion 34
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.shakirdriveapp"
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdk 21
+        targetSdk 34
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
+        multiDexEnabled true
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            // Proguard désactivé pour simplifier
             minifyEnabled false
             shrinkResources false
+        }
+        debug {
+            debuggable true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/{AL2.0,LGPL2.1}']
         }
     }
 }
 
-flutter {
-    source '../..'
-}
-
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.22"
+    // Flutter ajoute ses dépendances au build automatiquement via le plugin d’embed v2.
 }
