@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const ShakirDriveApp());
-}
+void main() => runApp(const ShakirDriveApp());
 
 class ShakirDriveApp extends StatelessWidget {
   const ShakirDriveApp({super.key});
@@ -16,7 +14,6 @@ class ShakirDriveApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomePage(),
-      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -32,9 +29,9 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset('assets/icon/shakir_drive.png', width: 160, height: 160),
+            const Text('Bienvenue dans SHAKIR DRIVE'),
             const SizedBox(height: 16),
-            const Text('Bienvenue sur SHAKIR DRIVE'),
+            Image.asset('assets/icon/shakir_drive.png', width: 120),
           ],
         ),
       ),
