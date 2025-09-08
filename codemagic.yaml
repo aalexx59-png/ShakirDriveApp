@@ -20,7 +20,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - aale...@gmail.com   # <-- mets ton e-mail exact ici
+          - aalexx59@gmail.com   # <-- mets ton e-mail exact ici
         notify:
           success: true
           failure: true
