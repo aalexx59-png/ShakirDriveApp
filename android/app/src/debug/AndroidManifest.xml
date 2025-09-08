@@ -1,5 +1,4 @@
-<!-- android/app/src/debug/AndroidManifest.xml -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.shakirdriveapp">
-    <application android:usesCleartextTraffic="true" />
+    <application android:usesCleartextTraffic="true"/>
 </manifest>
